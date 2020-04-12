@@ -1,6 +1,8 @@
 
 public class REdeque {
 
+    //Restricted Deque Only can be removed from the top 
+
     //FList class Fields
     private Node head;
     private int count = 0;
@@ -10,8 +12,6 @@ public class REdeque {
     private class Node{ 
         private int Data;
         Node next;
-        Node prev;
-     
 
         //Constructor
         public Node(int newData){
@@ -21,7 +21,7 @@ public class REdeque {
 
     //Add
     public void add(int item,Node node){
-        //node.next = head;
+        node.next = head;
         //node.prev = tail;
         head = node;
         tail = node;
@@ -37,17 +37,12 @@ public class REdeque {
             return;
         }
         else{
-            //Creating new Node object
-            newNode.prev = head;
-            head.next = newNode;
-            //oldHead.prev = newNode;
+            newNode.next = head;
             //Assigning newNode to the head of the linked list
             head = newNode;
-            //Increasing the count
             count++;
             return;
-        }
-       
+        }  
     }
 
     //Add to rear of deque
@@ -58,31 +53,30 @@ public class REdeque {
             return;
         }
         else{
-        tail.prev = newNode;
-        newNode.next = tail;
+        tail.next = newNode;
         tail = newNode;
         count++;
         return;
         }
-    
     }
+
+
 
     //Removing from front of deque
     public int removeFront() {
         Node currStackNode = head;
-        head = head.prev;
-        head.next = null;
+        head = head.next;
          count--;
         return currStackNode.Data;
     }
 
     //Removing from back of deque
-    public int removeRear(){
+    /*public int removeRear(){
         Node currStackNode = tail;
         tail = tail.next;
         count--;
         return currStackNode.Data;
-    }
+    }*/
 
     public boolean isEmpty() { 
         // Return true if stack is empty, false otherwise
@@ -98,25 +92,28 @@ public class REdeque {
     //Testing Method
 
     public void printDeque(){
-        Node currNode = tail;
+        Node currNode = head;
         //Goes through the linked list and prints elements
         while(currNode != null)
         {
             System.out.print(currNode.Data + " ");
             currNode = currNode.next;
         }
-
     }
 
     public int getHead(){
+   
         return head.Data;
+   
     }
 
     public int getRear(){
+  
         return tail.Data;
     }
 
     public int size(){
         return count;
     }
+   
 }
