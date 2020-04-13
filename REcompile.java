@@ -21,9 +21,7 @@ public class REcompile {
                 System.out.println(newRegexp.charAt(o) + " - index:" + o);
             }
             findExpression();
-            /*if(newRegexp.charAt(index) != '\0'){
-                error();
-            }*/
+            System.out.println("SAFE");
 
            }
            catch(Exception e){
@@ -38,7 +36,12 @@ public class REcompile {
         }
     }
 
-    private static void findExpression(){ 
+    private static void findExpression(){
+        if(index >= newRegexp.length()){
+            error();
+        }
+        printString();
+
         findTerm();
 
             if(index < newRegexp.length()){
@@ -46,6 +49,9 @@ public class REcompile {
                     findExpression();
                 }
             }
+            
+            
+            
     }
 
     private static void findTerm(){
@@ -53,14 +59,13 @@ public class REcompile {
   
         if(index >= newRegexp.length()){
 
-            System.out.println("in term");
             return;
         }
 
 
         if(newRegexp.charAt(index)=='*')
         {
-            System.out.println("in *");
+
             index++;
         }
         else if(newRegexp.charAt(index)=='?')
@@ -75,8 +80,7 @@ public class REcompile {
     }
 
     private static void findFactor(){
-        //(index < newRegexp.length()) &&
-        //System.out.println(newRegexp.charAt(index));
+
         if(validVocab(newRegexp.charAt(index))){
             index++;
         }
@@ -88,7 +92,7 @@ public class REcompile {
         else if(newRegexp.charAt(index)=='('){
             index++;
             findExpression();
-            
+        
             if((index < newRegexp.length()) && newRegexp.charAt(index)==')'){
                 index++;
             }
@@ -97,10 +101,9 @@ public class REcompile {
             }   
         }
         else if(newRegexp.charAt(index)=='.'){
-            System.out.println("dot");
                 index++;
         }
-        System.out.println(index);
+        
         return; 
     }
 
@@ -108,7 +111,7 @@ public class REcompile {
     private static boolean validVocab(char c){
         for(int i = 0; i < restrictedCharacters.length; i++){
             if(c == restrictedCharacters[i]){
-                System.out.println("false" + c + " " + restrictedCharacters[i]);
+                //System.out.println("false" + c + " " + restrictedCharacters[i]);
                 return false;
             }
         }
@@ -119,5 +122,12 @@ public class REcompile {
     private static void error(){
         System.out.println("Error");
         System.exit(1);
+    }
+
+    private static void printString(){
+        for (int i = index; i < newRegexp.length(); i++) {
+            System.out.print(newRegexp.charAt(i));
+        }
+        System.out.println();
     }
 }
