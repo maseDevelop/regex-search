@@ -17,9 +17,9 @@ public class REcompile {
             regexLength = newRegexp.length();
             System.out.println("Regular Expression:" + newRegexp);
 
-            for(int o=0;o<newRegexp.length();o++){
+            /*for(int o=0;o<newRegexp.length();o++){
                 System.out.println(newRegexp.charAt(o) + " - index:" + o);
-            }
+            }*/
             findExpression();
             System.out.println("SAFE");
 
@@ -38,19 +38,18 @@ public class REcompile {
 
     private static void findExpression(){
         if(index >= newRegexp.length()){
+            System.out.println("error2");
             error();
         }
-        printString();
 
         findTerm();
 
             if(index < newRegexp.length()){
                 if(validVocab(newRegexp.charAt(index))||newRegexp.charAt(index)=='('){
                     findExpression();
-                }
+               }
             }
-            
-            
+
             
     }
 
@@ -85,18 +84,23 @@ public class REcompile {
             index++;
         }
         else if(newRegexp.charAt(index)=='\\'){
+            System.out.println("index: " +index);
+
             index++;
               //Set state
             index++;
+            
         }
         else if(newRegexp.charAt(index)=='('){
             index++;
             findExpression();
-        
+            System.out.println(index);
             if((index < newRegexp.length()) && newRegexp.charAt(index)==')'){
+                System.out.println("in loop" + index);
                 index++;
             }
             else{
+                System.out.println("error1");
                 error();  
             }   
         }
@@ -120,7 +124,7 @@ public class REcompile {
 
     //Error exception
     private static void error(){
-        System.out.println("Error");
+        System.out.println("Error: Not valid Expression");
         System.exit(1);
     }
 
