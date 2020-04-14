@@ -1,4 +1,4 @@
-
+import java.util.*;
 
 //Mason Elliott Connor Jones
 public class REcompile {
@@ -7,25 +7,23 @@ public class REcompile {
     private static int index = 0;
     private static int state = 1;
     private static char[] restrictedCharacters = {'?','*','.', '\\', '|', '(', ')'};
-    private static int regexLength;
+
+    private static LinkedList<Character> characterArray = new LinkedList<Character>();
+    private static LinkedList<Integer> nextStateOne = new LinkedList<Integer>();
+    private static LinkedList<Integer> nextStateTwo = new LinkedList<Integer>();
+
 
     public static void main(String[] args) {
         if(args.length == 1)
         {
            try{
             newRegexp = args[0];
-            regexLength = newRegexp.length();
-            System.out.println("Regular Expression:" + newRegexp);
 
-            /*for(int o=0;o<newRegexp.length();o++){
-                System.out.println(newRegexp.charAt(o) + " - index:" + o);
-            }*/
             findExpression();
             System.out.println("SAFE");
 
            }
            catch(Exception e){
-            //error();
                System.out.println(e);
            }
         }
@@ -36,13 +34,14 @@ public class REcompile {
         }
     }
 
-    private static void findExpression(){
+    private static int findExpression(){
+        int r;
+
         if(index >= newRegexp.length()){
-            System.out.println("error2");
             error();
         }
 
-        findTerm();
+        r = findTerm();
 
             if(index < newRegexp.length()){
                 if(validVocab(newRegexp.charAt(index))||newRegexp.charAt(index)=='('){
@@ -50,21 +49,20 @@ public class REcompile {
                }
             }
 
+        return(r);
             
     }
 
-    private static void findTerm(){
-        findFactor();
+    private static int findTerm(){
+        int r;
+        r = findFactor();
   
         if(index >= newRegexp.length()){
-
-            return;
+            error();
         }
-
 
         if(newRegexp.charAt(index)=='*')
         {
-
             index++;
         }
         else if(newRegexp.charAt(index)=='?')
@@ -75,32 +73,32 @@ public class REcompile {
         {
             index++;
         }
-        return;
+        return(r);
     }
 
-    private static void findFactor(){
+    private static int findFactor(){
+
+        int r;
 
         if(validVocab(newRegexp.charAt(index))){
+            setState(state, newRegexp.charAt(index), state+1, state+1);
+            r = state;
             index++;
+            state++;
         }
         else if(newRegexp.charAt(index)=='\\'){
-            System.out.println("index: " +index);
-
             index++;
               //Set state
-            index++;
-            
+            index++;  
         }
         else if(newRegexp.charAt(index)=='('){
             index++;
             findExpression();
-            System.out.println(index);
+            
             if((index < newRegexp.length()) && newRegexp.charAt(index)==')'){
-                System.out.println("in loop" + index);
                 index++;
             }
             else{
-                System.out.println("error1");
                 error();  
             }   
         }
@@ -108,14 +106,13 @@ public class REcompile {
                 index++;
         }
         
-        return; 
+        return(r); 
     }
 
     //Checks to see if something is valid vocab
     private static boolean validVocab(char c){
         for(int i = 0; i < restrictedCharacters.length; i++){
             if(c == restrictedCharacters[i]){
-                //System.out.println("false" + c + " " + restrictedCharacters[i]);
                 return false;
             }
         }
@@ -128,10 +125,10 @@ public class REcompile {
         System.exit(1);
     }
 
-    private static void printString(){
-        for (int i = index; i < newRegexp.length(); i++) {
-            System.out.print(newRegexp.charAt(i));
-        }
-        System.out.println();
+    //Setting State for the FSM
+    private static void setState(int s, char c, int n1, int n2){
+        characterArray.add(s,c);
+        nextStateOne.add(s, n1);
+        nextStateTwo.add(s,n2);
     }
 }
