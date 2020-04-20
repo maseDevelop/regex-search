@@ -1,3 +1,4 @@
+import java.beans.Expression;
 import java.util.*;
 
 //Mason Elliott Connor Jones
@@ -20,6 +21,9 @@ public class REcompile {
             newRegexp = args[0];
 
             findExpression();
+            if(index != newRegexp.length()){
+                error();
+            }
             System.out.println("SAFE");
 
            }
@@ -34,31 +38,30 @@ public class REcompile {
         }
     }
 
-    private static int findExpression(){
+    private static void findExpression(){
         int r;
 
-        if(index >= newRegexp.length()){
-            error();
+        findTerm();
+
+        if(index == newRegexp.length()){
+            return;
         }
 
-        r = findTerm();
+       if(validVocab(newRegexp.charAt(index))||newRegexp.charAt(index)=='('
+            ||newRegexp.charAt(index)=='\\'||newRegexp.charAt(index)=='.')
+       {
+            findExpression();
+       }
 
-            if(index < newRegexp.length()){
-                if(validVocab(newRegexp.charAt(index))||newRegexp.charAt(index)=='('){
-                    findExpression();
-               }
-            }
-
-        return(r);
-            
+        return;
     }
 
-    private static int findTerm(){
+    private static void findTerm(){
         int r;
-        r = findFactor();
+         findFactor();
   
-        if(index >= newRegexp.length()){
-            error();
+        if(index == newRegexp.length()){
+            return;
         }
 
         if(newRegexp.charAt(index)=='*')
@@ -72,21 +75,24 @@ public class REcompile {
         else if(newRegexp.charAt(index)=='|')
         {
             index++;
+            findTerm();
         }
-        return(r);
+        return;
     }
 
-    private static int findFactor(){
+    private static void findFactor()
+    {
 
         int r;
-
+       
         if(validVocab(newRegexp.charAt(index))){
-            setState(state, newRegexp.charAt(index), state+1, state+1);
+            //setState(state, newRegexp.charAt(index), state+1, state+1);
             r = state;
             index++;
             state++;
         }
         else if(newRegexp.charAt(index)=='\\'){
+
             index++;
               //Set state
             index++;  
@@ -94,19 +100,26 @@ public class REcompile {
         else if(newRegexp.charAt(index)=='('){
             index++;
             findExpression();
-            
+
             if((index < newRegexp.length()) && newRegexp.charAt(index)==')'){
                 index++;
+
             }
             else{
+                System.out.println("error with ) bracket");
                 error();  
             }   
         }
         else if(newRegexp.charAt(index)=='.'){
                 index++;
         }
+        else{
+            System.out.println("errror factor");
+            error();
+        }
+       
         
-        return(r); 
+        return; 
     }
 
     //Checks to see if something is valid vocab
