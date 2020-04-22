@@ -205,7 +205,21 @@ public class REcompile {
 
     // Error exception
     private static void error() {
-        System.out.println("Error: Not valid Expression");
+        if(!(validVocab(newRegexp.charAt(index)))){
+            if(newRegexp.charAt(index) == '(' || newRegexp.charAt(index) == ')'){
+                System.out.println("Error: Not valid Expression, make sure you have a bracket pair ");
+                state++;
+            }
+            else{
+                System.out.println("Error: Not valid Expression ");
+                System.out.println("Error: If you wish to use special characters please use the escape key in the preceding index \"\\\" ");
+            }
+        }
+        else{
+            System.out.println("Somthing went wrong");
+        }
+
+        System.out.println("Error at index: " + state);
         System.exit(1);
     }
 
