@@ -66,23 +66,7 @@ public class REcompile {
             //Connecting the the expression and term
             laststate = state-1;
             nextState = findExpression();
-
-            /*if ((characterArray.get(r).compareTo("branch1")) == 0) {
-                // connecting first term of branch
-                t1 = nextStateOne.get(r);
-                t1 = nextStateOne.get(t1);
-                setState(t1, null, nextState, nextState);
-
-                // connecting second term of branch
-                t2 = nextStateTwo.get(r);
-                setState(t2, null, nextState, nextState);
-
-            } else {
-                setState(laststate, null, nextState, nextState);
-            }*/
             setState(laststate, null, nextState, nextState);
-      
-
         }
 
         return r;
@@ -101,12 +85,17 @@ public class REcompile {
             setState(state, "branch", r, state + 1);
             r = state;
             state++;
+
         } else if (newRegexp.charAt(index) == '?') {
             index++;//Consuming the character
             int expressionStart = state;
             setState(state, "branch1", r, state+1);//Dummie state
+            
             state++;
-            r=expressionStart;
+            setState(r,null,state,state);
+            setState(state, "dummie", state+1, state+1);
+            state++;
+            return expressionStart;
 
         } else if (newRegexp.charAt(index) == '|') {
             int r2, finalStateT1, e;
@@ -131,7 +120,7 @@ public class REcompile {
     private static int findFactor() {
         int r = state;
 
-        if (validVocab(newRegexp.charAt(index))) {
+        /*if (validVocab(newRegexp.charAt(index))) {
 
             setState(state, String.valueOf(newRegexp.charAt(index)), state + 1, state + 1);
             r = state;
@@ -154,6 +143,42 @@ public class REcompile {
                 error();
             }
         } else if (newRegexp.charAt(index) == '.') {
+            index++;
+            setState(state, "wildcard", state + 1, state + 1);
+            r = state;
+            state++;
+        } else {
+            error();
+        }*/
+
+        if (newRegexp.charAt(index) == '\\') {
+
+            index++;
+            setState(state, String.valueOf(newRegexp.charAt(index)), state + 1, state + 1);
+            index++;
+            
+            r = state;
+            state++;
+            
+        }
+        else if (newRegexp.charAt(index) == '(') {
+            index++;
+            r = findExpression();
+
+            if ((index < newRegexp.length()) && newRegexp.charAt(index) == ')') {
+                index++;
+            } else {
+                error();
+            }
+        }
+        else if (validVocab(newRegexp.charAt(index))) {
+
+            setState(state, String.valueOf(newRegexp.charAt(index)), state + 1, state + 1);
+            r = state;
+            index++;
+            state++;
+        } 
+        else if (newRegexp.charAt(index) == '.') {
             index++;
             setState(state, "wildcard", state + 1, state + 1);
             r = state;
@@ -194,15 +219,9 @@ public class REcompile {
         }
 
         else if (s < characterArray.size()) {
-            // characterArray.add(s,c);
             nextStateOne.set(s, n1);
             nextStateTwo.set(s, n2);
         }
 
-    }
-
-    private static void changeStatePath(int s, int newState1, int newState2) {
-        nextStateOne.set(s, newState1);
-        nextStateTwo.set(s, newState1);
     }
 }
