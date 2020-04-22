@@ -63,10 +63,11 @@ public class REcompile {
         if (validVocab(newRegexp.charAt(index)) || newRegexp.charAt(index) == '(' || newRegexp.charAt(index) == '\\'
                 || newRegexp.charAt(index) == '.') {
 
-            laststate = r;
+            //Connecting the the expression and term
+            laststate = state-1;
             nextState = findExpression();
 
-            if ((characterArray.get(r).compareTo("branch1")) == 0) {
+            /*if ((characterArray.get(r).compareTo("branch1")) == 0) {
                 // connecting first term of branch
                 t1 = nextStateOne.get(r);
                 t1 = nextStateOne.get(t1);
@@ -78,7 +79,8 @@ public class REcompile {
 
             } else {
                 setState(laststate, null, nextState, nextState);
-            }
+            }*/
+            setState(laststate, null, nextState, nextState);
 
         }
 
@@ -113,9 +115,9 @@ public class REcompile {
             state++;
 
             r2 = findTerm();
-            System.out.println("dfsssssss " + state);
             setState(e, "branch1", r, r2);
             setState(finalStateT1, "dummie", state, state);
+
             System.out.println(r + " " + r2);
             r = e;
         }
