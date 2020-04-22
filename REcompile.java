@@ -191,7 +191,7 @@ public class REcompile {
 
         if (!(validVocab(newRegexp.charAt(index)))) {
             if (newRegexp.charAt(index) == '(' || newRegexp.charAt(index) == ')') {
-                System.out.println("Error: Not valid Expression, make sure you have a bracket pair or something in your brackets ");
+                System.out.println("Error: Not valid Expression, make sure you have a bracket pair or and something in your brackets ");
                 state++;
             } else {
                 System.out.println("Error: Not valid Expression ");
