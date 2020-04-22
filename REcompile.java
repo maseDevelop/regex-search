@@ -83,7 +83,10 @@ public class REcompile {
         if (newRegexp.charAt(index) == '*') {
             index++;
             setState(state, "branch", r, state + 1);
+            
             r = state;
+            state++;
+            setState(state,"Dummie",r,state+1);
             state++;
 
         } else if (newRegexp.charAt(index) == '?') {
