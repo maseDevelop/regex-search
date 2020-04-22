@@ -29,7 +29,7 @@ public class REcompile {
                     error();
                 }
                 setState(0, "start", initialState, initialState);
-
+       
                 setState(state, "end", -1, -1);
                 System.out.println("SAFE");
 
@@ -57,8 +57,8 @@ public class REcompile {
         if (validVocab(newRegexp.charAt(index)) || newRegexp.charAt(index) == '(' || newRegexp.charAt(index) == '\\'
                 || newRegexp.charAt(index) == '.') {
 
-            // Connecting the the expression and term
-            laststate = state - 1;
+            //Connecting the the expression and term
+            laststate = state-1;
             nextState = findExpression();
             setState(laststate, null, nextState, nextState);
         }
@@ -77,30 +77,30 @@ public class REcompile {
         if (newRegexp.charAt(index) == '*') {
             index++;
             setState(state, "branch", r, state + 1);
-
+            
             r = state;
             state++;
-            setState(state, "Dummie", r, state + 1);
+            setState(state,"Dummie",r,state+1);
             state++;
 
         } else if (newRegexp.charAt(index) == '?') {
-            index++;// Consuming the character
+            index++;//Consuming the character
             int expressionStart = state;
-            setState(state, "branch1", r, state + 1);// Dummie state
-
+            setState(state, "branch1", r, state+1);//Dummie state
+            
             state++;
-            setState(r, null, state, state);
-            setState(state, "dummie", state + 1, state + 1);
+            setState(r,null,state,state);
+            setState(state, "dummie", state+1, state+1);
             state++;
             return expressionStart;
 
         } else if (newRegexp.charAt(index) == '|') {
             int r2, finalStateT1, e;
             finalStateT1 = state;
-            setState(finalStateT1, "dummie", -1, -1);// Dummie state
+            setState(finalStateT1, "dummie", -1, -1);//Dummie state
             state++;
             e = state;
-            setState(e, "branch1", -1, -1);// Dummie state
+            setState(e, "branch1", -1, -1);//Dummie state
 
             index++;// Consuming character
             state++;
@@ -115,50 +115,39 @@ public class REcompile {
     }
 
     private static int findFactor() {
-        int r = state;
+        
 
-        /*
-         * if (validVocab(newRegexp.charAt(index))) {
-         * 
-         * setState(state, String.valueOf(newRegexp.charAt(index)), state + 1, state +
-         * 1); r = state; index++; state++; } else if (newRegexp.charAt(index) == '\\')
-         * {
-         * 
-         * index++; setState(state, String.valueOf(newRegexp.charAt(index)), state + 1,
-         * state + 1); index++; r = state; state++; } else if (newRegexp.charAt(index)
-         * == '(') { index++; r = findExpression();
-         * 
-         * if ((index < newRegexp.length()) && newRegexp.charAt(index) == ')') {
-         * index++; } else { error(); } } else if (newRegexp.charAt(index) == '.') {
-         * index++; setState(state, "wildcard", state + 1, state + 1); r = state;
-         * state++; } else { error(); }
-         */
-        try {
+        try{
+            int r = state;
+
             if (newRegexp.charAt(index) == '\\') {
 
                 index++;
                 setState(state, String.valueOf(newRegexp.charAt(index)), state + 1, state + 1);
                 index++;
-
+                
                 r = state;
                 state++;
-
-            } else if (newRegexp.charAt(index) == '(') {
+                
+            }
+            else if (newRegexp.charAt(index) == '(') {
                 index++;
                 r = findExpression();
-
+    
                 if ((index < newRegexp.length()) && newRegexp.charAt(index) == ')') {
                     index++;
                 } else {
                     error();
                 }
-            } else if (validVocab(newRegexp.charAt(index))) {
-
+            }
+            else if (validVocab(newRegexp.charAt(index))) {
+    
                 setState(state, String.valueOf(newRegexp.charAt(index)), state + 1, state + 1);
                 r = state;
                 index++;
                 state++;
-            } else if (newRegexp.charAt(index) == '.') {
+            } 
+            else if (newRegexp.charAt(index) == '.') {
                 index++;
                 setState(state, "wildcard", state + 1, state + 1);
                 r = state;
@@ -166,12 +155,15 @@ public class REcompile {
             } else {
                 error();
             }
-
+    
             return r;
-        } catch (Exception e) {
-            error();
         }
-
+        catch(Exception e){
+            error();
+            return -1;
+        }
+        
+        
     }
 
     // Checks to see if something is valid vocab
@@ -186,16 +178,17 @@ public class REcompile {
 
     // Error exception
     private static void error() {
-        if (!(validVocab(newRegexp.charAt(index)))) {
-            if (newRegexp.charAt(index) == '(' || newRegexp.charAt(index) == ')') {
+        if(!(validVocab(newRegexp.charAt(index)))){
+            if(newRegexp.charAt(index) == '(' || newRegexp.charAt(index) == ')'){
                 System.out.println("Error: Not valid Expression, make sure you have a bracket pair ");
                 state++;
-            } else {
-                System.out.println("Error: Not valid Expression ");
-                System.out.println(
-                        "Error: If you wish to use special characters please use the escape key in the preceding index \"\\\" ");
             }
-        } else {
+            else{
+                System.out.println("Error: Not valid Expression ");
+                System.out.println("Error: If you wish to use special characters please use the escape key in the preceding index \"\\\" ");
+            }
+        }
+        else{
             System.out.println("Somthing went wrong");
         }
 
@@ -208,6 +201,7 @@ public class REcompile {
 
         System.out.println(s + " " + c + " " + n1 + " " + n2 + " ");
 
+     
         if (s == characterArray.size()) {
             characterArray.add(c);
             nextStateOne.add(n1);
@@ -221,7 +215,7 @@ public class REcompile {
 
     }
 
-    private static void writeToOutput() {
+    private static void writeToOutput(){
         for (int i = 0; i < characterArray.size(); i++) {
             System.out.print(i + ",");
             System.out.print(characterArray.get(i) + ",");
