@@ -29,7 +29,7 @@ public class REcompile {
                     error();
                 }
                 setState(0, "start", initialState, initialState);
-                // changeStatePath(0,initialState,initialState);
+       
                 setState(state, "end", -1, -1);
                 System.out.println("SAFE");
 
@@ -81,6 +81,7 @@ public class REcompile {
                 setState(laststate, null, nextState, nextState);
             }*/
             setState(laststate, null, nextState, nextState);
+      
 
         }
 
@@ -101,24 +102,27 @@ public class REcompile {
             r = state;
             state++;
         } else if (newRegexp.charAt(index) == '?') {
-            index++;
+            index++;//Consuming the character
+            int expressionStart = state;
+            setState(state, "branch1", r, state+1);//Dummie state
+            state++;
+            r=expressionStart;
+
         } else if (newRegexp.charAt(index) == '|') {
             int r2, finalStateT1, e;
-            finalStateT1 = state;// System.out.println(laststate);
-            setState(finalStateT1, "dummie", -1, -1);
+            finalStateT1 = state;
+            setState(finalStateT1, "dummie", -1, -1);//Dummie state
             state++;
             e = state;
-            setState(e, "branch1", -1, -1);
+            setState(e, "branch1", -1, -1);//Dummie state
 
             index++;// Consuming character
-
             state++;
 
             r2 = findTerm();
             setState(e, "branch1", r, r2);
             setState(finalStateT1, "dummie", state, state);
 
-            System.out.println(r + " " + r2);
             r = e;
         }
         return r;
@@ -128,7 +132,7 @@ public class REcompile {
         int r = state;
 
         if (validVocab(newRegexp.charAt(index))) {
-            // System.out.println(newRegexp.charAt(index));
+
             setState(state, String.valueOf(newRegexp.charAt(index)), state + 1, state + 1);
             r = state;
             index++;
@@ -180,11 +184,9 @@ public class REcompile {
     // Setting State for the FSM
     private static void setState(int s, String c, int n1, int n2) {
 
-        /*
-         * characterArray.add(c); nextStateOne.add(n1); nextStateTwo.add(n2);
-         */
-
         System.out.println(s + " " + c + " " + n1 + " " + n2 + " ");
+
+     
         if (s == characterArray.size()) {
             characterArray.add(c);
             nextStateOne.add(n1);
