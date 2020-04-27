@@ -51,20 +51,18 @@ public class REcompile {
             int r, nextState, laststate, t1, t2;
 
             r = findTerm();
-
+            // e -> te
             if (index == newRegexp.length()) {
                 return r;
             }
 
             if (validVocab(newRegexp.charAt(index)) || newRegexp.charAt(index) == '(' || newRegexp.charAt(index) == '\\'
                     || newRegexp.charAt(index) == '.') {
-
                 // Connecting the the expression and term
                 laststate = state - 1;
                 nextState = findExpression();
                 setState(laststate, null, nextState, nextState);
             }
-
             return r;
         } catch (Exception e) {
             error();
@@ -89,7 +87,7 @@ public class REcompile {
 
                 r = state;
                 state++;
-                setState(state, "Dummie", r, state + 1);
+                setState(state, "Dummie", state + 1, state + 1);
                 state++;
 
             } else if (newRegexp.charAt(index) == '?') {
@@ -229,7 +227,7 @@ public class REcompile {
             System.out.print(i + ",");
             System.out.print(characterArray.get(i) + ",");
             System.out.print(nextStateOne.get(i) + ",");
-            System.out.print(nextStateTwo.get(i) + ",");
+            System.out.print(nextStateTwo.get(i));
             System.out.println();
         }
     }
