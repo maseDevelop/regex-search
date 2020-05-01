@@ -1,3 +1,5 @@
+//Name: Mason Elliot, Connor Jones
+//ID: , 1351782
 
 public class REdeque {
 

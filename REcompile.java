@@ -31,7 +31,7 @@ public class REcompile {
                 setState(0, "start", initialState, initialState);
 
                 setState(state, "end", -1, -1);
-                System.out.println("SAFE");
+                //System.out.println("SAFE");
 
                 writeToOutput();
 
@@ -207,7 +207,7 @@ public class REcompile {
     // Setting State for the FSM
     private static void setState(int s, String c, int n1, int n2) {
 
-        System.out.println(s + " " + c + " " + n1 + " " + n2 + " ");
+        //System.out.println(s + " " + c + " " + n1 + " " + n2 + " ");
 
         if (s == characterArray.size()) {
             characterArray.add(c);
