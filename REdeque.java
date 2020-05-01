@@ -22,7 +22,7 @@ public class REdeque {
     }
 
     //Add
-    public void add(int item,Node node){
+    private void add(int item,Node node){
         node.next = head;
         //node.prev = tail;
         head = node;
@@ -101,6 +101,12 @@ public class REdeque {
             System.out.print(currNode.Data + " ");
             currNode = currNode.next;
         }
+    }
+    
+    public void clear(){
+    	head = null;
+    	tail = null;
+    	count = 0;
     }
 
     public int getHead(){
