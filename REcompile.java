@@ -93,7 +93,7 @@ public class REcompile {
             } else if (newRegexp.charAt(index) == '?') {
                 index++;// Consuming the character
                 int expressionStart = state;
-                setState(state, "branch1", r, state + 1);// Dummie state
+                setState(state, "branch", r, state + 1);// Dummie state
 
                 state++;
                 setState(r, null, state, state);
@@ -107,13 +107,13 @@ public class REcompile {
                 setState(finalStateT1, "dummie", -1, -1);// Dummie state
                 state++;
                 e = state;
-                setState(e, "branch1", -1, -1);// Dummie state
+                setState(e, "branch", -1, -1);// Dummie state
 
                 index++;// Consuming character
                 state++;
 
                 r2 = findTerm();
-                setState(e, "branch1", r, r2);
+                setState(e, "branch", r, r2);
                 setState(finalStateT1, "dummie", state, state);
 
                 r = e;
