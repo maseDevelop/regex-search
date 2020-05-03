@@ -101,6 +101,7 @@ public class REsearch {
 								deque.addRear(nextStateOne.get(state));							
 															
 							}else{
+								
 								if (p >= line.length())
 								break;
 								//Check the character, if same increase pointer
@@ -108,15 +109,18 @@ public class REsearch {
 								char e = characterArray.get(state).charAt(0);
 								//System.out.println("Comparing: " + c + " " + e);
 								if (c == e){
+									deque.printDeque();
 									//add potential states to stack
-									deque.addRear(nextStateOne.get(state));
 									p++;
 								
+									//If we have found one of the branching characters, remove the other brancing character.
 									while (!deque.isEmpty())
 										if (deque.getHead() != -2)
 											deque.removeFront();
 										else
 											break;
+									
+										
 								}
 							}
 							

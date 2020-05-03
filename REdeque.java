@@ -98,9 +98,10 @@ public class REdeque {
         //Goes through the linked list and prints elements
         while(currNode != null)
         {
-            System.out.print(currNode.Data + " ");
+            System.out.println(currNode.Data);
             currNode = currNode.next;
         }
+        System.out.println("________");
     }
     
     public void clear(){
