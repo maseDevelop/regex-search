@@ -8,7 +8,7 @@ public class REsearch {
 	private LinkedList<String> characterArray = new LinkedList<String>();
     	private LinkedList<Integer> nextStateOne = new LinkedList<Integer>();
     	private LinkedList<Integer> nextStateTwo = new LinkedList<Integer>();
-    	private LinkedList<Boolean> visited = new LinkedList<Boolean>();
+    	//private LinkedList<Boolean> visited = new LinkedList<Boolean>();
     	
     	
     	REdeque deque;
@@ -43,7 +43,6 @@ public class REsearch {
 			characterArray.add(inputArr[1]);
 			nextStateOne.add(Integer.parseInt(inputArr[2]));
 			nextStateTwo.add(Integer.parseInt(inputArr[3]));
-			visited.add(false);
 			}
 			tableIn.close();
 			
@@ -79,15 +78,12 @@ public class REsearch {
 							
 						}else if (characterArray.get(state).compareTo("start") == 0 || 
 							characterArray.get(state).compareTo("dummie") == 0){
-							
 							deque.addFront(nextStateOne.get(state));
-							visited.set(state, true);
 							
 						}else if (characterArray.get(state).compareTo("branch") == 0){
 							//Add both the nexts states to the top of deque to check
 							deque.addFront(nextStateTwo.get(state));
 							deque.addFront(nextStateOne.get(state));
-							visited.set(state, true);
 						
 						}else if (nextStateOne.get(state) == -1){
 							//Logic to say we have found match
@@ -109,7 +105,7 @@ public class REsearch {
 								char e = characterArray.get(state).charAt(0);
 								//System.out.println("Comparing: " + c + " " + e);
 								if (c == e){
-									deque.printDeque();
+									deque.addRear(nextStateOne.get(state));
 									//add potential states to stack
 									p++;
 								
