@@ -87,7 +87,7 @@ public class REcompile {
 
                 r = state;
                 state++;
-                setState(state, "Dummie", state + 1, state + 1);
+                setState(state, "dummie", state + 1, state + 1);
                 state++;
 
             } else if (newRegexp.charAt(index) == '?') {

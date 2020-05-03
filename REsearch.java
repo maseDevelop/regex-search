@@ -18,6 +18,7 @@ public class REsearch {
 	public static void main(String[] args) {
 		if (args.length != 1){
 			System.err.println("Usage: java REsearch <Search File> < table");
+			return;
 		}
 		
 		REsearch e = new REsearch();
@@ -77,7 +78,7 @@ public class REsearch {
 							deque.addRear(-2);
 							
 						}else if (characterArray.get(state).compareTo("start") == 0 || 
-							characterArray.get(state).compareTo("Dummie") == 0){
+							characterArray.get(state).compareTo("dummie") == 0){
 							
 							deque.addFront(nextStateOne.get(state));
 							visited.set(state, true);
@@ -95,18 +96,29 @@ public class REsearch {
 							break;
 							
 						}else{
-							if (p >= line.length())
-								break;
-							//Check the character, if same increase pointer
-							char c = line.charAt(p);
-							char e = characterArray.get(state).charAt(0);
-							System.out.println("Comparing: " + c + " " + e);
-							if (c == e){
-								//add potential states to stack
-								deque.addRear(nextStateOne.get(state));
+							if (characterArray.get(state).compareTo("wildcard") == 0){
 								p++;
+								deque.addRear(nextStateOne.get(state));							
+															
+							}else{
+								if (p >= line.length())
+								break;
+								//Check the character, if same increase pointer
+								char c = line.charAt(p);
+								char e = characterArray.get(state).charAt(0);
+								//System.out.println("Comparing: " + c + " " + e);
+								if (c == e){
+									//add potential states to stack
+									deque.addRear(nextStateOne.get(state));
+									p++;
+								
+									while (!deque.isEmpty())
+										if (deque.getHead() != -2)
+											deque.removeFront();
+										else
+											break;
+								}
 							}
-							
 							
 						}
 						
