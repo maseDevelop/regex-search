@@ -1,6 +1,8 @@
+//Mason Elliott Connor Jones
+//1347257 1351782
 import java.util.*;
 
-//Mason Elliott Connor Jones
+
 public class REcompile {
 
     private static String newRegexp;
@@ -31,7 +33,7 @@ public class REcompile {
                 setState(0, "start", initialState, initialState);
 
                 setState(state, "end", -1, -1);
-
+                System.out.println("THE END");
                 writeToOutput();
 
             } catch (Exception e) {
@@ -62,14 +64,17 @@ public class REcompile {
                 state++;
                 e = state;
                 setState(e, "branch", -1, -1);// Dummie state
-
+                
+           
+                
                 index++;// Consuming character
                 state++;
 
                 r2 = findDisjunction();
                 setState(e, "branch", r, r2);
                 setState(finalStateT1, "dummie", state, state);
-
+             
+             
                 r = e;
             }
             return r;
@@ -90,7 +95,6 @@ public class REcompile {
             int r, nextState, laststate, t1, t2;
 
             r = findTerm();
-            // e -> te
             if (index == newRegexp.length()) {
                 return r;
             }
@@ -105,8 +109,7 @@ public class REcompile {
             
             return r;
         } catch (Exception e) {
-            //error();
-            System.out.println(e);
+            error();
             return -1;
         }
 
@@ -137,12 +140,24 @@ public class REcompile {
                 setState(state, "branch", r, state + 1);// Dummie state
 
                 state++;
-                setState(r, null, state, state);
+
+                //For the special case of disjunction - fixes a very specific bug maybe not needed i.e. (a|b)? 
+                if(characterArray.get(r).compareTo("branch") == 0){
+                    setState(r-1, null, state, state);
+                    setState(r+1,null,state,state);
+                }
+                else{
+                    setState(r, null, state, state);
+                }
+
+                //setState(r, null, state, state);
                 setState(state, "dummie", state + 1, state + 1);
                 state++;
+                System.out.println("satecoming out of ? " + expressionStart);
                 return expressionStart;
 
             }
+           
             return r;
 
         } catch (Exception e) {
@@ -233,7 +248,7 @@ public class REcompile {
     // Setting State for the FSM
     private static void setState(int s, String c, int n1, int n2) {
 
-        //System.out.println(s + " " + c + " " + n1 + " " + n2 + " ");
+        System.out.println(s + " " + c + " " + n1 + " " + n2 + " ");
 
         if (s == characterArray.size()) {
             characterArray.add(c);
