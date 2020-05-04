@@ -89,12 +89,6 @@ public class REsearch {
 		}
 	}
 	
-	public void dump(){
-		for (int i = 0; i < characterArray.size(); i++){
-			System.out.println(characterArray.get(i) + " " + nextStateOne.get(i) + " " + nextStateTwo.get(i));
-		}
-	}
-	
 	public void resetVisited(){
 		for(int i = 0; i < visited.size(); i++)
 			visited.set(i, false);
