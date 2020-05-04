@@ -110,13 +110,13 @@ public class REsearch {
 		}else if (visited.get(state) == true){
 			return false;
 		
-		}else if (characterArray.get(state).compareTo("start") == 0 || 
-			characterArray.get(state).compareTo("dummie") == 0){
+		}else if (characterArray.get(state).compareTo("st") == 0 || 
+			characterArray.get(state).compareTo("du") == 0){
 			//Comment
 			deque.addFront(nextStateOne.get(state));
 			visited.set(state, true);
 									
-		}else if (characterArray.get(state).compareTo("branch") == 0){
+		}else if (characterArray.get(state).compareTo("br") == 0){
 			//Add both the nexts states to the top of deque to check
 			deque.addFront(nextStateTwo.get(state));
 			deque.addFront(nextStateOne.get(state));
@@ -130,7 +130,7 @@ public class REsearch {
 			
 		}else{
 			if (!(p >= line.length()))
-				if (characterArray.get(state).compareTo("wildcard") == 0)
+				if (characterArray.get(state).compareTo("wc") == 0)
 					deque.addRear(nextStateOne.get(state));	
 				else{
 					//Check the character, if same increase pointer

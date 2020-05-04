@@ -79,7 +79,7 @@ public class REcompile {
                 r2 = findDisjunction();
                 //Correcting both of the next states
                 setState(e, BRANCH, r, r2);
-                setState(finalStateT1, DUMMIE, state, state);
+                setState(finalStateT1, DUMMIE, state + 1, state + 1);
                 //Setting the start place
                 r = e;
             }
@@ -140,7 +140,7 @@ public class REcompile {
             else if (newRegexp.charAt(index) == '?') {
                 index++;// Consuming the character
                 int expressionStart = state;
-                setState(state, DUMMIE, r, state + 1);// Dummie state
+                setState(state, BRANCH, r, state + 1);// Dummie state
                 state++;
 
                 // For the special case of disjunction - fixes a very specific bug maybe not needed i.e. (a|b)?
@@ -150,8 +150,6 @@ public class REcompile {
                 } else {
                     setState(r, null, state, state);
                 }
-
-                // setState(r, null, state, state);
                 setState(state, DUMMIE, state + 1, state + 1);
                 state++;
                 return expressionStart;
