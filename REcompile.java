@@ -9,6 +9,10 @@ public class REcompile {
     private static int index = 0;
     private static int state = 1;
     private static char[] restrictedCharacters = { '?', '*', '.', '\\', '|', '(', ')' };
+    private static final String wildcard = "wc";
+    private static final String branch = "br";
+    private static final String dummie = "du";
+    private static final String start = "start";
 
     private static LinkedList<String> characterArray = new LinkedList<String>();
     private static LinkedList<Integer> nextStateOne = new LinkedList<Integer>();
@@ -20,7 +24,7 @@ public class REcompile {
                 newRegexp = args[0];
 
                 // intilising the arrays
-                characterArray.add("start");
+                characterArray.add(start);
                 nextStateOne.add(-1);
                 nextStateTwo.add(-1);
 
@@ -30,10 +34,10 @@ public class REcompile {
                 if (index != newRegexp.length()) {
                     error();
                 }
-                setState(0, "start", initialState, initialState);
-
+                //Setting the start state that has been returned to start of fsm
+                setState(0, start, initialState, initialState);
                 setState(state, "end", -1, -1);
-                System.out.println("THE END");
+    
                 writeToOutput();
 
             } catch (Exception e) {
@@ -50,9 +54,9 @@ public class REcompile {
     private static int findDisjunction(){
 
         try {
-            int r, nextState, laststate, t1, t2;
+            int r;
 
-            r = findExpression();
+            r = findconcatenation();
             if (index == newRegexp.length()) {
                 return r;
             }
@@ -60,19 +64,17 @@ public class REcompile {
             if(newRegexp.charAt(index) == '|') {
                 int r2, finalStateT1, e;
                 finalStateT1 = state;
-                setState(finalStateT1, "dummie", -1, -1);// Dummie state
+                setState(finalStateT1, dummie, -1, -1);// Dummie state
                 state++;
                 e = state;
-                setState(e, "branch", -1, -1);// Dummie state
-                
-           
-                
+                setState(e, branch, -1, -1);
+ 
                 index++;// Consuming character
                 state++;
 
                 r2 = findDisjunction();
-                setState(e, "branch", r, r2);
-                setState(finalStateT1, "dummie", state, state);
+                setState(e, branch, r, r2);
+                setState(finalStateT1, dummie, state, state);
              
              
                 r = e;
@@ -83,18 +85,15 @@ public class REcompile {
 
             return -1;
         }
-
-
-        
-
     }
 
-    private static int findExpression() {
+    private static int findconcatenation() {
 
         try {
-            int r, nextState, laststate, t1, t2;
+            int r, nextState, laststate;
 
             r = findTerm();
+
             if (index == newRegexp.length()) {
                 return r;
             }
@@ -103,7 +102,7 @@ public class REcompile {
                     || newRegexp.charAt(index) == '.') {
                 // Connecting the the expression and term
                 laststate = state - 1;
-                nextState = findExpression();
+                nextState = findconcatenation();
                 setState(laststate, null, nextState, nextState);
             }
             
@@ -127,22 +126,22 @@ public class REcompile {
 
             if (newRegexp.charAt(index) == '*') {
                 index++;
-                setState(state, "branch", r, state + 1);
+                setState(state, branch, r, state + 1);
 
                 r = state;
                 state++;
-                setState(state, "dummie", state + 1, state + 1);
+                setState(state, dummie, state + 1, state + 1);
                 state++;
 
             } else if (newRegexp.charAt(index) == '?') {
                 index++;// Consuming the character
                 int expressionStart = state;
-                setState(state, "branch", r, state + 1);// Dummie state
+                setState(state, dummie, r, state + 1);// Dummie state
 
                 state++;
 
                 //For the special case of disjunction - fixes a very specific bug maybe not needed i.e. (a|b)? 
-                if(characterArray.get(r).compareTo("branch") == 0){
+                if(characterArray.get(r).compareTo(branch) == 0){
                     setState(r-1, null, state, state);
                     setState(r+1,null,state,state);
                 }
@@ -151,9 +150,8 @@ public class REcompile {
                 }
 
                 //setState(r, null, state, state);
-                setState(state, "dummie", state + 1, state + 1);
+                setState(state, dummie, state + 1, state + 1);
                 state++;
-                System.out.println("satecoming out of ? " + expressionStart);
                 return expressionStart;
 
             }
@@ -200,7 +198,7 @@ public class REcompile {
                 state++;
             } else if (newRegexp.charAt(index) == '.') {
                 index++;
-                setState(state, "wildcard", state + 1, state + 1);
+                setState(state, wildcard, state + 1, state + 1);
                 r = state;
                 state++;
             } else {
@@ -247,8 +245,6 @@ public class REcompile {
 
     // Setting State for the FSM
     private static void setState(int s, String c, int n1, int n2) {
-
-        System.out.println(s + " " + c + " " + n1 + " " + n2 + " ");
 
         if (s == characterArray.size()) {
             characterArray.add(c);
