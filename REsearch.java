@@ -5,10 +5,12 @@ import java.io.*;
 
 public class REsearch {
 
-	private LinkedList<String> characterArray = new LinkedList<String>();
-    	private LinkedList<Integer> nextStateOne = new LinkedList<Integer>();
-    	private LinkedList<Integer> nextStateTwo = new LinkedList<Integer>();
-    	//private LinkedList<Boolean> visited = new LinkedList<Boolean>();
+	private ArrayList<String> characterArray = new ArrayList<String>();
+    	private ArrayList<Integer> nextStateOne = new ArrayList<Integer>();
+    	private ArrayList<Integer> nextStateTwo = new ArrayList<Integer>();
+    	private ArrayList<Boolean> visited = new ArrayList<Boolean>();
+    	
+    	boolean found;
     	
     	
     	REdeque deque;
@@ -36,13 +38,13 @@ public class REsearch {
 			String line;
 			String[] inputArr;
 			int s1, s2, state;
-			boolean found;
 		
 			while ((line = tableIn.readLine()) != null){
 			inputArr = line.split(",");
 			characterArray.add(inputArr[1]);
 			nextStateOne.add(Integer.parseInt(inputArr[2]));
 			nextStateTwo.add(Integer.parseInt(inputArr[3]));
+			visited.add(false);
 			}
 			tableIn.close();
 			
@@ -59,6 +61,7 @@ public class REsearch {
 					deque.addRear(-2);
 					
 					//Reset visited to false
+					resetVisited();
 					
 					while (true){
 						//No characters to match states left. Move m forward.
@@ -66,61 +69,12 @@ public class REsearch {
 							break;
 						}
 						
-						//Find match
+						//Get top of current states stack.
 						state = deque.removeFront();
-						//System.out.println(state);
 						
-						if(state == -2){
-							//See if there is more in the stack if so move to back
-							if (deque.isEmpty())
-								break;
-							deque.addRear(-2);
-							
-						}else if (characterArray.get(state).compareTo("start") == 0 || 
-							characterArray.get(state).compareTo("dummie") == 0){
-							deque.addFront(nextStateOne.get(state));
-							
-						}else if (characterArray.get(state).compareTo("branch") == 0){
-							//Add both the nexts states to the top of deque to check
-							deque.addFront(nextStateTwo.get(state));
-							deque.addFront(nextStateOne.get(state));
-						
-						}else if (nextStateOne.get(state) == -1){
-							//Logic to say we have found match
-							found = true;
-							System.out.println(line);
+						//Work the state
+						if (checkState(state, line))
 							break;
-							
-						}else{
-							if (characterArray.get(state).compareTo("wildcard") == 0){
-								p++;
-								deque.addRear(nextStateOne.get(state));							
-															
-							}else{
-								
-								if (p >= line.length())
-								break;
-								//Check the character, if same increase pointer
-								char c = line.charAt(p);
-								char e = characterArray.get(state).charAt(0);
-								//System.out.println("Comparing: " + c + " " + e);
-								if (c == e){
-									deque.addRear(nextStateOne.get(state));
-									//add potential states to stack
-									p++;
-								
-									//If we have found one of the branching characters, remove the other brancing character.
-									while (!deque.isEmpty())
-										if (deque.getHead() != -2)
-											deque.removeFront();
-										else
-											break;
-									
-										
-								}
-							}
-							
-						}
 						
 					}
 					if (found)
@@ -139,5 +93,62 @@ public class REsearch {
 		for (int i = 0; i < characterArray.size(); i++){
 			System.out.println(characterArray.get(i) + " " + nextStateOne.get(i) + " " + nextStateTwo.get(i));
 		}
+	}
+	
+	public void resetVisited(){
+		for(int i = 0; i < visited.size(); i++)
+			visited.set(i, false);
+	}
+	
+	public boolean checkState(int state, String line){
+	
+		if(state == -2){
+			//See if there is more in the stack if so move to back
+			if (deque.isEmpty())
+				return true;
+			deque.addRear(-2);
+			p++;
+			resetVisited();	
+						
+		}else if (visited.get(state) == true){
+			return false;
+		
+		}else if (characterArray.get(state).compareTo("start") == 0 || 
+			characterArray.get(state).compareTo("dummie") == 0){
+			//Comment
+			deque.addFront(nextStateOne.get(state));
+			visited.set(state, true);
+									
+		}else if (characterArray.get(state).compareTo("branch") == 0){
+			//Add both the nexts states to the top of deque to check
+			deque.addFront(nextStateTwo.get(state));
+			deque.addFront(nextStateOne.get(state));
+			visited.set(state, true);
+			
+		}else if (nextStateOne.get(state) == -1){
+			//Logic to say we have found match
+			found = true;
+			System.out.println(line);
+			return true;
+			
+		}else{
+			if (characterArray.get(state).compareTo("wildcard") == 0){
+				//comment
+				deque.addRear(nextStateOne.get(state));							
+			}else{
+				//Comment		
+				if (!(p >= line.length())){
+					//Check the character, if same increase pointer
+					char c = line.charAt(p);
+					char e = characterArray.get(state).charAt(0);
+					if (c == e){
+						//Add these onto stack
+						deque.addRear(nextStateOne.get(state));
+						visited.set(state, true);	
+					}
+				}	
+			}				
+		}
+		return false;
 	}
 }
