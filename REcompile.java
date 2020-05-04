@@ -1,7 +1,7 @@
+
 //Mason Elliott Connor Jones
 //1347257 1351782
 import java.util.*;
-
 
 public class REcompile {
 
@@ -9,10 +9,10 @@ public class REcompile {
     private static int index = 0;
     private static int state = 1;
     private static char[] restrictedCharacters = { '?', '*', '.', '\\', '|', '(', ')' };
-    private static final String wildcard = "wc";
-    private static final String branch = "br";
-    private static final String dummie = "du";
-    private static final String start = "start";
+    private static final String WILDCARD = "wc";
+    private static final String BRANCH = "br";
+    private static final String DUMMIE = "du";
+    private static final String START = "st";
 
     private static LinkedList<String> characterArray = new LinkedList<String>();
     private static LinkedList<Integer> nextStateOne = new LinkedList<Integer>();
@@ -23,21 +23,23 @@ public class REcompile {
             try {
                 newRegexp = args[0];
 
-                // intilising the arrays
-                characterArray.add(start);
+                // intilising the fsm
+                characterArray.add(START);
                 nextStateOne.add(-1);
                 nextStateTwo.add(-1);
 
+                //Finding the inital state of the fsm
                 int initialState = findDisjunction();
 
                 // If an early exit from tree, raise error
                 if (index != newRegexp.length()) {
                     error();
                 }
-                //Setting the start state that has been returned to start of fsm
-                setState(0, start, initialState, initialState);
+
+                // Setting the start state that has been returned to start of fsm
+                setState(0, START, initialState, initialState);
                 setState(state, "end", -1, -1);
-    
+
                 writeToOutput();
 
             } catch (Exception e) {
@@ -49,34 +51,35 @@ public class REcompile {
             System.exit(0);
         }
     }
-    
-    //Lowest precedence
-    private static int findDisjunction(){
+
+    // Lowest precedence
+    private static int findDisjunction() {
 
         try {
             int r;
 
             r = findconcatenation();
+
             if (index == newRegexp.length()) {
                 return r;
             }
 
-            if(newRegexp.charAt(index) == '|') {
+            if (newRegexp.charAt(index) == '|') {
                 int r2, finalStateT1, e;
+
                 finalStateT1 = state;
-                setState(finalStateT1, dummie, -1, -1);// Dummie state
+                setState(finalStateT1, DUMMIE, -1, -1);
                 state++;
                 e = state;
-                setState(e, branch, -1, -1);
- 
+                setState(e, BRANCH, -1, -1);
+
                 index++;// Consuming character
                 state++;
 
                 r2 = findDisjunction();
-                setState(e, branch, r, r2);
-                setState(finalStateT1, dummie, state, state);
-             
-             
+                setState(e, BRANCH, r, r2);
+                setState(finalStateT1, DUMMIE, state, state);
+
                 r = e;
             }
             return r;
@@ -87,6 +90,7 @@ public class REcompile {
         }
     }
 
+    //Second lowest precedence
     private static int findconcatenation() {
 
         try {
@@ -105,7 +109,7 @@ public class REcompile {
                 nextState = findconcatenation();
                 setState(laststate, null, nextState, nextState);
             }
-            
+
             return r;
         } catch (Exception e) {
             error();
@@ -126,41 +130,41 @@ public class REcompile {
 
             if (newRegexp.charAt(index) == '*') {
                 index++;
-                setState(state, branch, r, state + 1);
+                setState(state, BRANCH, r, state + 1);
 
                 r = state;
                 state++;
-                setState(state, dummie, state + 1, state + 1);
+                setState(state, DUMMIE, state + 1, state + 1);
                 state++;
 
             } else if (newRegexp.charAt(index) == '?') {
                 index++;// Consuming the character
                 int expressionStart = state;
-                setState(state, dummie, r, state + 1);// Dummie state
+                setState(state, DUMMIE, r, state + 1);// Dummie state
 
                 state++;
 
-                //For the special case of disjunction - fixes a very specific bug maybe not needed i.e. (a|b)? 
-                if(characterArray.get(r).compareTo(branch) == 0){
-                    setState(r-1, null, state, state);
-                    setState(r+1,null,state,state);
-                }
-                else{
+                // For the special case of disjunction - fixes a very specific bug maybe not
+                // needed i.e. (a|b)?
+                if (characterArray.get(r).compareTo(BRANCH) == 0) {
+                    setState(r - 1, null, state, state);
+                    setState(r + 1, null, state, state);
+                } else {
                     setState(r, null, state, state);
                 }
 
-                //setState(r, null, state, state);
-                setState(state, dummie, state + 1, state + 1);
+                // setState(r, null, state, state);
+                setState(state, DUMMIE, state + 1, state + 1);
                 state++;
                 return expressionStart;
 
             }
-           
+
             return r;
 
         } catch (Exception e) {
             error();
-            
+
             return -1;
         }
 
@@ -171,7 +175,7 @@ public class REcompile {
         try {
 
             int r = state;
-            //System.out.println(index);
+            // System.out.println(index);
             if (newRegexp.charAt(index) == '\\') {
 
                 index++;
@@ -183,7 +187,7 @@ public class REcompile {
 
             } else if (newRegexp.charAt(index) == '(') {
                 index++;
-                //System.out.println(index);
+                // System.out.println(index);
                 r = findDisjunction();
                 if ((index < newRegexp.length()) && newRegexp.charAt(index) == ')') {
                     index++;
@@ -198,7 +202,7 @@ public class REcompile {
                 state++;
             } else if (newRegexp.charAt(index) == '.') {
                 index++;
-                setState(state, wildcard, state + 1, state + 1);
+                setState(state, WILDCARD, state + 1, state + 1);
                 r = state;
                 state++;
             } else {
@@ -213,7 +217,7 @@ public class REcompile {
 
     }
 
-    // Checks to see if something is valid vocab
+    // Checks to see if a char is valid vocab
     private static boolean validVocab(char c) {
         for (int i = 0; i < restrictedCharacters.length; i++) {
             if (c == restrictedCharacters[i]) {
@@ -228,7 +232,8 @@ public class REcompile {
 
         if (!(validVocab(newRegexp.charAt(index)))) {
             if (newRegexp.charAt(index) == '(' || newRegexp.charAt(index) == ')') {
-                System.out.println("Error: Not valid Expression, make sure you have a bracket pair or and something in your brackets ");
+                System.out.println(
+                        "Error: Not valid Expression, make sure you have a bracket pair or and something in your brackets ");
                 state++;
             } else {
                 System.out.println("Error: Not valid Expression ");
