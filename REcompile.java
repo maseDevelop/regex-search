@@ -11,7 +11,7 @@ public class REcompile {
     private static char[] restrictedCharacters = { '?', '*', '.', '\\', '|', '(', ')' };
     private static final String WILDCARD = "wc";
     private static final String BRANCH = "br";
-    private static final String DUMMIE = "du";
+    private static final String DUMMIE = "du";//Pass throught exit state(easier for concationation)
     private static final String START = "st";
 
     private static LinkedList<String> characterArray = new LinkedList<String>();
@@ -68,21 +68,27 @@ public class REcompile {
                 int r2, finalStateT1, e;
 
                 finalStateT1 = state;
-                setState(finalStateT1, DUMMIE, -1, -1);//Setting a dummie state for the last machine to connect to 
+                setState(finalStateT1, DUMMIE, -1, -1);//initialises space in the list for dummie state
                 state++;
                 e = state;//Setting start state of the branching machine
-                setState(e, BRANCH, -1, -1);
+                setState(e, BRANCH, -1, -1);//initialisng space in the list for branch
 
                 index++;// Consuming character
                 state++;
 
                 r2 = findDisjunction();
+                
+                //Creating another branching machine that is the pass through exit of the branching states
+                setState(state,DUMMIE,state+1,state+1);
+                state++;
+
                 //Correcting both of the next states
                 setState(e, BRANCH, r, r2);
-                setState(finalStateT1, DUMMIE, state + 1, state + 1);
-                //Setting the start place
+                setState(finalStateT1, DUMMIE, state-1, state-1);
+                //Setting the start place of the branching machine
                 r = e;
             }
+
             return r;
         } catch (Exception e) {
             error();
@@ -105,8 +111,8 @@ public class REcompile {
 
             if (validVocab(newRegexp.charAt(index)) || newRegexp.charAt(index) == '(' || newRegexp.charAt(index) == '\\'
                     || newRegexp.charAt(index) == '.') {
-                // Connecting the the term and the concatination
-                laststate = state - 1;
+                // Connecting the last term of the previous machine to the start of the next one
+                laststate = state - 1;//Last state that can be used because state is always looking ahead
                 nextState = findconcatenation();
                 setState(laststate, null, nextState, nextState);
             }
@@ -119,6 +125,7 @@ public class REcompile {
 
     }
 
+    //Third Lowest precedence 
     private static int findTerm() {
 
         try {
@@ -128,43 +135,44 @@ public class REcompile {
             if (index == newRegexp.length()) {
                 return r;
             }
-
+            //Checks for closure
             if (newRegexp.charAt(index) == '*') {
                 index++;//Consuming the character
-                setState(state, BRANCH, r, state + 1);
+                
+                setState(state, BRANCH, r, state + 1);//Connnecting the last state and the next state into a branching machine
                 r = state;//Setting the start of the branching machine
                 state++;
+
                 setState(state, DUMMIE, state + 1, state + 1);
                 state++;
-            } 
+            }
+            //Checks for ? option
             else if (newRegexp.charAt(index) == '?') {
                 index++;// Consuming the character
                 int expressionStart = state;
-                setState(state, BRANCH, r, state + 1);// Dummie state
+        
+                setState(state, BRANCH, r, state + 1);
                 state++;
 
-                // For the special case of disjunction - fixes a very specific bug maybe not needed i.e. (a|b)?
-                if (characterArray.get(r).compareTo(BRANCH) == 0) {
-                    setState(r - 1, null, state, state);
-                    setState(r + 1, null, state, state);
-                } else {
-                    setState(r, null, state, state);
-                }
+                //connecting the end of the last machine to the end of this branch to avoid repition. 
+                setState(state-2, null, state, state);
+
                 setState(state, DUMMIE, state + 1, state + 1);
                 state++;
-                return expressionStart;
+
+                //return expressionStart
+                r=expressionStart;
             }
 
             return r;
 
         } catch (Exception e) {
             error();
-
             return -1;
         }
 
     }
-
+    
     private static int findFactor() {
 
         try {
@@ -172,29 +180,26 @@ public class REcompile {
             int r = state;
 
             if (newRegexp.charAt(index) == '\\') {
-                index++;
+                index++;//Consuming Character
                 setState(state, String.valueOf(newRegexp.charAt(index)), state + 1, state + 1);
-                index++;
-
-                r = state;
+                index++;//Consuming character
+                r = state;//returning the start state of this machine
                 state++;
 
             } else if (newRegexp.charAt(index) == '(') {
                 index++;
-                // System.out.println(index);
-                r = findDisjunction();
+                r = findDisjunction();//(d) finding the expression in the brackets
                 if ((index < newRegexp.length()) && newRegexp.charAt(index) == ')') {
                     index++;
                 } else {
                     error();
                 }
-            } else if (validVocab(newRegexp.charAt(index))) {
-
+            } else if (validVocab(newRegexp.charAt(index))) { //Checking for literal 
                 setState(state, String.valueOf(newRegexp.charAt(index)), state + 1, state + 1);
                 r = state;
                 index++;
                 state++;
-            } else if (newRegexp.charAt(index) == '.') {
+            } else if (newRegexp.charAt(index) == '.') { //Checking for wildcard
                 index++;
                 setState(state, WILDCARD, state + 1, state + 1);
                 r = state;
@@ -250,7 +255,7 @@ public class REcompile {
             nextStateOne.add(n1);
             nextStateTwo.add(n2);
         }
-
+        //States may be overidden to change the place they branch to
         else if (s < characterArray.size()) {
             nextStateOne.set(s, n1);
             nextStateTwo.set(s, n2);
