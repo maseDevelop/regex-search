@@ -28,31 +28,25 @@ public class REsearch {
 	
 	public void run(String[] args){
 		try{
-			//Variable init
-			deque = new REdeque();
-			BufferedReader tableIn = new BufferedReader(new InputStreamReader(System.in));
+			//BufferedReader tableIn = new BufferedReader(new InputStreamReader(System.in));
 			FileReader file = new FileReader(new File(args[0]));
 			BufferedReader fileIn = new BufferedReader(file);
-			String line;
-			String[] inputArr;
+			
+			//Variable init
+			deque = new REdeque();
 			int s1, s2, state;
+			String line;
 		
-			//Reads the table and sets it up for our search.
-			while ((line = tableIn.readLine()) != null){
-			inputArr = line.split(",");
-			characterArray.add(inputArr[1]);
-			nextStateOne.add(Integer.parseInt(inputArr[2]));
-			nextStateTwo.add(Integer.parseInt(inputArr[3]));
-			visited.add(false);
-			}
-			tableIn.close();
+			//Setting up the table.
+			setupTable();
 			
 			//Reads every line of the file
 			while ((line = fileIn.readLine()) != null){
+				//Reset found since this is now a new line.
 				found = false;
 				//Reads every character in that line
 				for (int i = 0; i < line.length(); i++){
-					m = i;
+					//Reset p to the starting point of the search.
 					p = i;
 					
 					//Setup Deque
@@ -65,7 +59,7 @@ public class REsearch {
 					
 					//Proccesses every state in the deque
 					while (true){
-						//No characters to match states left. Move m forward.
+						//No characters to match states left. Move starting char forward forward.
 						if (deque.isEmpty())
 							break;
 						
@@ -96,6 +90,37 @@ public class REsearch {
 			visited.set(i, false);
 	}
 	
+	//Sets the table up that will be used to find the patterns.
+	public void setupTable(){
+		try{
+			//Variable setup
+			BufferedReader tableIn = new BufferedReader(new InputStreamReader(System.in));
+			String line;
+			String[] inputArr;
+	
+			//Reads the table and sets it up for our search.
+			while ((line = tableIn.readLine()) != null){
+				//Split each line into their seperate parts
+				inputArr = line.split(",");
+				//Check to see if we're not getting the expected input
+				if(inputArr.length != 4){
+					System.err.println("Invalid Table");
+					System.exit(1);
+				}
+				//Put each part into their corresponding array
+				characterArray.add(inputArr[1]);
+				nextStateOne.add(Integer.parseInt(inputArr[2]));
+				nextStateTwo.add(Integer.parseInt(inputArr[3]));
+				visited.add(false);
+			}
+			//Have read the whole file so close the reader.
+			tableIn.close();
+		}
+		catch(Exception e){
+			System.err.print("Error: " + e);
+		}
+	}
+	
 	//Takes the state, identifies it, and then proccesses it based on what it is.
 	public boolean checkState(int state, String line){
 	
@@ -103,40 +128,59 @@ public class REsearch {
 			//See if there is more in the stack if so move to back
 			if (deque.isEmpty())
 				return true;
+			
+			//If add the SCAN to the back to make the queue now the current state stack.
 			deque.addRear(-2);
+			//Say we have now proccessed this character.
 			p++;
+			//Since we have used a character reset the visited states on the table.
 			resetVisited();	
-						
-		}else if (visited.get(state) == true){
+		}
+		else if (visited.get(state) == true){
+			//If we're in a visited state we just want to discard this state.
 			return false;
 		
-		}else if (characterArray.get(state).compareTo("st") == 0 || 
+		}
+		else if (characterArray.get(state).compareTo("st") == 0 || 
 			characterArray.get(state).compareTo("du") == 0){
-			//Comment
+			//For the start and the dummie states we want to add their next state one to the current states.
 			deque.addFront(nextStateOne.get(state));
+			//Set this state to visited to avoid infinite loops
 			visited.set(state, true);
 									
-		}else if (characterArray.get(state).compareTo("br") == 0){
-			//Add both the nexts states to the top of deque to check
+		}
+		else if (characterArray.get(state).compareTo("br") == 0){
+			//Add both the branches nexts states to the top of deque to check
 			deque.addFront(nextStateTwo.get(state));
 			deque.addFront(nextStateOne.get(state));
+			//Set this state to visited to avoid infinite loops
 			visited.set(state, true);
 			
-		}else if (nextStateOne.get(state) == -1){
-			//Logic to say we have found match
+		}
+		else if (nextStateOne.get(state) == -1){
+			//We have reached the end state, set the found variable to true so the next loop stop proccessing this line.
 			found = true;
+			//Output this line.
 			System.out.println(line);
+			//End this loop.
 			return true;
-			
-		}else{
+		}
+		else{//Else we're in a state that wants to check a character
+			//If there are still characters to check against
 			if (!(p >= line.length()))
-				if (characterArray.get(state).compareTo("wc") == 0)
-					deque.addRear(nextStateOne.get(state));	
+				//If it's a wild character
+				if (characterArray.get(state).compareTo("wc") == 0){
+					//We want to just add it to the queue without checking and end.
+					deque.addRear(nextStateOne.get(state));
+					//Stop infinite loops
+					visited.set(state, true);
+				}
 				else{
-					//Check the character, if same increase pointer
+					//Check the character to see if they match
 					if (line.charAt(p) == characterArray.get(state).charAt(0)){
-						//Add these onto stack
+						//Since they match add the next state to the queue
 						deque.addRear(nextStateOne.get(state));
+						//Stop infinite loops
 						visited.set(state, true);	
 					}
 				}				
