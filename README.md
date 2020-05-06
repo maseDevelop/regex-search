@@ -26,6 +26,8 @@ F -> v
 
 F -> .
 
+v -> Aproved literal 
+
 **Usage:**
 
 java  REcompile *Regex String* | java REsearch Text *File to Search*
