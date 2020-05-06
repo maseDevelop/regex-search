@@ -1,4 +1,5 @@
-//Mason Elliot Connor Jones
+//Name: Mason Elliot, Connor Jones
+//ID: 1347257, 1351782
 
 import java.util.*;
 import java.io.*;

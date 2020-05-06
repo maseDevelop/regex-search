@@ -1,5 +1,5 @@
 //Name: Mason Elliot, Connor Jones
-//ID: , 1351782
+//ID: 1347257, 1351782
 
 public class REdeque {
 
@@ -62,8 +62,6 @@ public class REdeque {
         }
     }
 
-
-
     //Removing from front of deque
     public int removeFront() {
         Node currStackNode = head;
@@ -71,14 +69,6 @@ public class REdeque {
          count--;
         return currStackNode.Data;
     }
-
-    //Removing from back of deque
-    /*public int removeRear(){
-        Node currStackNode = tail;
-        tail = tail.next;
-        count--;
-        return currStackNode.Data;
-    }*/
 
     public boolean isEmpty() { 
         // Return true if stack is empty, false otherwise
