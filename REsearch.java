@@ -65,11 +65,11 @@ public class REsearch {
 						
 						//Get top of current states stack.
 						state = deque.removeFront();
-						
+
 						//Proccesses the current state
 						if (checkState(state, line))
 							break;
-						
+
 					}
 					//Stops loop so we read next line once we have found a match in this line.
 					if (found)
@@ -104,7 +104,10 @@ public class REsearch {
 				inputArr = line.split(",");
 				//Check to see if we're not getting the expected input
 				if(inputArr.length != 4){
-					System.err.println("Invalid Table");
+					
+					System.err.println(line);
+					while ((line = tableIn.readLine()) != null)
+						System.err.println(line);
 					System.exit(1);
 				}
 				//Put each part into their corresponding array
