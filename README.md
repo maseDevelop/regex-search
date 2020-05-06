@@ -1,8 +1,8 @@
-## Regular Expression Compiler/Searcher
+#Regular Expression Compiler/Searcher
 
 Returns a line of text if a regular expression is found on that line 
 
-# Defined Grammar
+## Defined Grammar
 
 E -> D
 
@@ -26,6 +26,6 @@ F -> v
 
 F -> .
 
-Usage:
+**Usage:**
 
 java  REcompile *Regex String* | java REsearch Text *File to Search*
