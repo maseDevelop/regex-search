@@ -6,13 +6,13 @@ Returns a line of text if a regular expression is found on that line
 
 E -> D
 
-E -> D|E
-
 D -> C
 
-D -> TC
+D -> C|D
 
 C -> T
+
+C -> TC
 
 T-> F
 
