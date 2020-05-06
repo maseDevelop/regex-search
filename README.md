@@ -2,4 +2,4 @@
 
 Usage:
 
-java  REcompile <Regex String> | java REsearch <Text File to Search>
+java  REcompile *Regex String* | java REsearch Text *File to Search*
