@@ -1,6 +1,6 @@
 
 //Mason Elliott Connor Jones
-//1347257 1351782
+
 import java.util.*;
 
 public class REcompile {
