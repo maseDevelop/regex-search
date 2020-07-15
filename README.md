@@ -28,7 +28,7 @@ F -> v
 
 F -> .
 
-v -> Aproved literal 
+v -> Approved literal 
 
 **Usage:**
 
